@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AccessPath · Accessible Campus Navigation</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-mark" aria-hidden="true">A</div>
+    <div class="brand-copy"><strong>AccessPath</strong><span>Accessible campus navigation</span></div>
+    <div class="topbar-right"><span class="demo-pill"><span class="pulse"></span> Demo environment</span><button id="refreshBtn" class="btn btn-ghost" type="button">Refresh map state</button></div>
+  </header>
+
+  <main class="page-shell">
+    <section class="intro-row">
+      <div>
+        <div class="eyebrow">NAVIGATION THAT ADAPTS</div>
+        <h1>Find a route you can actually use.</h1>
+        <p class="lede">Plan around accessibility needs, then adapt when a pathway or facility becomes unavailable.</p>
+      </div>
+      <div class="status-summary"><span class="status-dot"></span><div><strong id="campusStatus">Campus status loading</strong><small id="campusUpdated">Loading infrastructure state…</small></div></div>
+    </section>
+
+    <section class="planner-panel panel">
+      <div class="panel-heading"><div><span class="step-tag">01</span><h2>Plan a route</h2></div><span class="muted">Accessibility constraints are enforced before route cost is optimized.</span></div>
+      <div class="planner-grid">
+        <label class="field"><span>Starting point</span><select id="startSelect"></select></label>
+        <label class="field"><span>Destination</span><select id="destinationSelect"></select></label>
+        <label class="field"><span>Accessibility profile</span><select id="profileSelect"></select></label>
+        <button class="btn btn-primary find-btn" id="findRouteBtn" type="button"><span>Find accessible route</span><span aria-hidden="true">→</span></button>
+      </div>
+      <div class="profile-explainer" id="profileExplainer"></div>
+    </section>
+
+    <div class="workspace-grid">
+      <section class="panel map-panel">
+        <div class="panel-heading map-heading"><div><span class="step-tag">02</span><h2>Campus graph</h2></div><div class="map-legend"><span><i class="legend-line route-line"></i>Selected route</span><span><i class="legend-line"></i>Open segment</span><span><i class="legend-line blocked-line"></i>Blocked</span></div></div>
+        <div class="map-scroll"><svg id="campusMap" viewBox="0 0 940 430" role="img" aria-label="Schematic campus graph with outdoor, ground floor, and first floor route segments"></svg></div>
+        <div class="map-footnote"><span class="legend-node"></span> Nodes are mapped locations. Lines are traversable connections. Click a line to select it for the admin controls.</div>
+        <div class="floor-status" id="floorStatus"></div>
+      </section>
+
+      <aside class="panel route-panel">
+        <div class="panel-heading"><div><span class="step-tag">03</span><h2>Route details</h2></div><span id="routeBadge" class="badge neutral">Not calculated</span></div>
+        <div id="routeEmpty" class="empty-state"><div class="empty-symbol">↗</div><strong>Ready when you are</strong><p>Choose a destination and profile, then calculate a route. The graph and route steps will appear here.</p></div>
+        <div id="routeResult" class="hidden">
+          <div class="route-metrics"><div><strong id="distanceMetric">—</strong><span>metres</span></div><div><strong id="segmentsMetric">—</strong><span>segments</span></div><div><strong id="facilityMetric">—</strong><span>facilities</span></div></div>
+          <p id="routeMessage" class="route-message"></p>
+          <div class="section-label">TURN-BY-TURN SEGMENTS</div>
+          <ol id="routeSteps" class="route-steps"></ol>
+          <div class="route-note"><strong>Data confidence</strong><p>Route validity depends on the accuracy and freshness of mapped accessibility information. This demo map is illustrative, not a real campus survey.</p></div>
+        </div>
+        <div id="routeError" class="error-box hidden" role="alert"></div>
+      </aside>
+    </div>
+
+    <section class="panel reports-panel">
+      <div class="panel-heading"><div><span class="step-tag">04</span><h2>Report an accessibility barrier</h2></div><span class="muted">New reports remain pending until reviewed.</span></div>
+      <form id="reportForm" class="report-form">
+        <label class="field"><span>Location / facility</span><select id="reportTarget" required></select></label>
+        <label class="field"><span>Barrier type</span><select id="barrierType"><option>Path blocked</option><option>Elevator unavailable</option><option>Ramp obstructed</option><option>Surface damaged</option><option>Width or slope incorrect</option><option>Other accessibility issue</option></select></label>
+        <label class="field wide-field"><span>Description</span><input id="reportDescription" required minlength="4" maxlength="800" placeholder="Describe what is blocked or unavailable…" /></label>
+        <label class="field"><span>Name (optional)</span><input id="reporterAlias" maxlength="80" placeholder="Anonymous" /></label>
+        <button class="btn btn-secondary" type="submit">Submit report</button>
+      </form>
+      <p id="reportFeedback" class="inline-feedback" aria-live="polite"></p>
+    </section>
+
+    <section class="panel admin-panel">
+      <div class="panel-heading"><div><span class="step-tag">05</span><h2>Facilities admin · simulate conditions</h2></div><span class="admin-tag">DEMO CONTROLS</span></div>
+      <p class="admin-intro">Use these controls to simulate the assignment's failure scenarios. Changes take effect in the routing graph immediately. Verified user reports are applied separately from these admin maintenance controls. This prototype has no authentication; keep it local.</p>
+      <div class="admin-controls">
+        <div class="admin-control-card"><span class="control-kicker">FACILITY STATUS</span><h3>Elevator availability</h3><label class="field"><span>Elevator</span><select id="facilitySelect"></select></label><label class="field"><span>Admin maintenance status</span><select id="facilityStatusSelect"><option value="available">Available</option><option value="unavailable">Unavailable</option></select></label><button id="applyFacilityBtn" class="btn btn-dark" type="button">Apply facility status</button></div>
+        <div class="admin-control-card"><span class="control-kicker">PATH STATUS</span><h3>Block or reopen a segment</h3><label class="field"><span>Route segment</span><select id="edgeSelect"></select></label><label class="field"><span>Admin maintenance status</span><select id="edgeStatusSelect"><option value="blocked">Blocked</option><option value="open">Open</option></select></label><button id="applyEdgeBtn" class="btn btn-dark" type="button">Apply path status</button></div>
+      </div>
+      <p id="adminFeedback" class="inline-feedback" aria-live="polite"></p>
+      <div class="reports-queue-heading"><div><h3>Barrier review queue</h3><p>Verify applies the reported restriction. Resolve restores the default state if no other verified report remains active.</p></div><button id="refreshReportsBtn" class="btn btn-ghost" type="button">Refresh queue</button></div>
+      <div id="reportsQueue" class="reports-queue"><div class="queue-empty">Loading reports…</div></div>
+    </section>
+
+    <footer class="footer"><div><strong>AccessPath MVP</strong><span>Accessibility-aware routing · prototype v0.2</span></div><span>Sample graph only · no live facility integration</span></footer>
+  </main>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
