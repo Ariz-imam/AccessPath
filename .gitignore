@@ -1,0 +1,32 @@
+# Python environments and bytecode
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Test and coverage output
+.coverage
+coverage.xml
+htmlcov/
+
+# Local databases and runtime output
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.log
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Editor / operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
