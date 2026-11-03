@@ -269,22 +269,4 @@ To reset the demo, stop the server and delete `data/accesspath.db`. Restarting t
 - **Report governance:** Duplicate grouping, reporter reputation, evidence review, expiry/re-verification, and conflict resolution need a clearly designed policy.
 - **Accessibility validation:** A route that satisfies recorded graph attributes is not automatically safe or accessible in reality. Map data quality and user testing are essential.
 
-## GitHub publication notes
 
-Before publishing, review this README and the demonstration data, confirm the repository name and ownership, and choose a license if you intend to permit reuse. No license has been included because the project owner has not selected one. Never commit `.venv`, local databases, credentials, or real users' personal information.
-
-The GitHub Actions workflow in `.github/workflows/tests.yml` runs the automated tests on pushes and pull requests.
-
-To publish this folder as a new GitHub repository, create an empty repository on GitHub (do not add a README there), then run these commands from this folder after reviewing `git status`:
-
-```bash
-git init
-git add .
-git status
-git commit -m "Prepare AccessPath MVP for initial release"
-git branch -M main
-git remote add origin https://github.com/<your-account>/<repository-name>.git
-git push -u origin main
-```
-
-Replace the remote URL with your repository URL. These commands publish the source; they do not configure deployment or make the prototype production-safe.
